@@ -1,0 +1,25 @@
+{
+  "name": "merapi-plugin-express",
+  "version": "0.1.0",
+  "description": "Merapi Plugin for Express App",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/yesboss/merapi-plugin-express.git"
+  },
+  "keywords": [
+    "express",
+    "merapi"
+  ],
+  "author": "Ahmad Rizqi Meydiarso",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/yesboss/merapi-plugin-express#readme",
+  "dependencies": {
+    "@yesboss/merapi": "^0.9.7",
+    "express": "^4.14.0",
+    "type-check": "^0.3.2"
+  }
+}
