@@ -1,6 +1,6 @@
 {
   "name": "@yesboss/merapi-plugin-express",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Merapi Plugin for Express App",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,7 @@
   "homepage": "https://bitbucket.org/yesboss/merapi-plugin-express#readme",
   "dependencies": {
     "@yesboss/merapi": "^0.9.7",
+    "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "type-check": "^0.3.2"
   }
