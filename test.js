@@ -10,19 +10,21 @@ let container = merapi({
         version: "1.0.0",
 
         components: {
-            "app": {type:"express"}
+            "app": { type: "express" }
         },
 
         main: "con",
 
-        routes: {
-            "/": ["con.access", {
-                "GET": "con.get",
-                "/post": {
-                    "POST": "con.post"
-                }
-            }],
-            "GET /test": "con.getTest"
+        app: {
+            routes: {
+                "/": ["con.access", {
+                    "GET": "con.get",
+                    "/post": {
+                        "POST": "con.post"
+                    }
+                }],
+                "GET /test": "con.getTest"
+            }
         }
     }
 });
@@ -55,6 +57,6 @@ container.register("con", class Con extends Component {
     }
 });
 
-container.start().catch(function(e){
+container.start().catch(function (e) {
     console.error(e);
 });
