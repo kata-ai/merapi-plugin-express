@@ -1,6 +1,6 @@
 {
   "name": "@yesboss/merapi-plugin-express",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Merapi Plugin for Express App",
   "main": "index.js",
   "scripts": {
