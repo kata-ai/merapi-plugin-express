@@ -34,7 +34,7 @@ describe("getfn", () => {
             }
         });
 
-        container.start();
+        container.initialize();
 
         com = yield container.resolve("com");
         let injector = yield container.resolve("injector");
@@ -73,4 +73,32 @@ describe("getfn", () => {
 
         expect(real).to.equal(expectation);
     });
+
+    it("should throw error if no function found", async(function* () {
+        let container = merapi({
+            basepath: __dirname,
+            config: {
+                name: "test",
+                version: "1.0.0",
+                main: "com"
+            }
+        });
+
+        container.register("com", class Com extends Component {
+            constructor() { super(); }
+            start() { }
+        });
+
+        container.initialize();
+
+        com = yield container.resolve("com");
+        let injector = yield container.resolve("injector");
+        let getFn = getfn(injector);
+
+        let e;
+        try { fn = yield getFn("com.method"); }
+        catch (ex) { e = ex; }
+
+        expect(e).to.be.an("error");
+    }));
 });

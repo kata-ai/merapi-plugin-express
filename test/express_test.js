@@ -116,10 +116,39 @@ describe("Merapi Plugin: Express", () => {
             get(req, res) { res.send(); }
         });
 
-        container.start();
+        container.initialize();
         let app = yield container.resolve("app");
         expect(app).to.exist;
         chai.request(app).get("/").end((e, r) => { expect(r.status).to.equal(200); });
+        done;
+    }));
+
+    it("should get resolved without routes", async(function* (done) {
+        let container = merapi({
+            basepath: __dirname,
+            config: {
+                name: "test",
+                version: "1.0.0",
+                components: { "app": { type: "express" } },
+                main: "com",
+                app: { "middleware": ["com.access"] }
+            }
+        });
+
+        container.registerPlugin("express", require("../index.js")(container));
+        container.register("com", class Com extends Component {
+            constructor() { super(); }
+            start() { }
+            access(req, res, next) {
+                let token = req.query.token;
+                if (token == "access") next();
+                else res.status(401).end("Unauthorized");
+            }
+        });
+
+        container.start();
+        let app = yield container.resolve("app");
+        expect(app).to.exist;
         done;
     }));
 });
