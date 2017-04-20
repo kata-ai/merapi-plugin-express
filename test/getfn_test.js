@@ -7,7 +7,7 @@ const { expect } = require("chai");
 
 describe("getfn", () => {
 
-    let com, fn;
+    let com, fn, fnWithParams;
 
     beforeEach((async(function* () {
         let container = merapi({
@@ -21,7 +21,6 @@ describe("getfn", () => {
 
         container.register("com", class Com extends Component {
             constructor() { super(); }
-
             start() { }
 
             method(req) {
@@ -30,6 +29,9 @@ describe("getfn", () => {
                 return y;
             }
 
+            methodWithArgs(a, b, c, req) {
+                return a == 1 && b == 2 && c == 3 && req.args.a == 1;
+            }
         });
 
         container.start();
@@ -38,6 +40,7 @@ describe("getfn", () => {
         let injector = yield container.resolve("injector");
         let getFn = getfn(injector);
         fn = yield getFn("com.method");
+        fnWithParams = yield getFn("com.methodWithArgs(1, 2, 3)");
     })));
 
     it("should resolve function", () => {
@@ -45,12 +48,29 @@ describe("getfn", () => {
     });
 
     it("should return the correct function", () => {
-        expect(fn({ params: {}, args: {} })).to.equal(com.method());
+        let real = com.method();
+
+        let req = { params: {}, args: {} };
+        let expectation = fn(req);
+
+        expect(real).to.equal(expectation);
     });
 
     it("should return function with merged args and params", () => {
-        let x = fn({ params: { a: 1 }, args: { b: 2 } });
-        let y = com.method({ args: { a: 1, b: 2 } });
-        expect(x).to.equal(y);
+        let real = com.method({ args: { a: 1, b: 2 } });
+
+        let req = { params: { a: 1 }, args: { b: 2 } };
+        let expectation = fn(req);
+
+        expect(real).to.equal(expectation);
+    });
+
+    it("should return function with bound args", () => {
+        let real = com.methodWithArgs(1, 2, 3, { args: { a: 1 } });
+
+        let req = { params: {}, args: { a: 1 } };
+        let expectation = fnWithParams(req);
+
+        expect(real).to.equal(expectation);
     });
 });
