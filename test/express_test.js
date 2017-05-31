@@ -1,9 +1,9 @@
 "use strict";
 
-const merapi = require("@yesboss/merapi");
-const { async, Component } = require("@yesboss/merapi");
+const merapi = require("merapi");
+const { async, Component } = require("merapi");
 const chai = require("chai");
-const { expect, should } = require("chai");
+const { expect } = require("chai");
 const chaiHttp = require("chai-http");
 
 chai.use(chaiHttp);
@@ -39,7 +39,7 @@ describe("Merapi Plugin: Express", () => {
             }
         });
 
-        container.initialize();
+        yield container.initialize();
         let app = yield container.resolve("app");
         expect(app).to.exist;
         chai.request(app).get("/get").end((e, r) => { expect(r.status).to.equal(401); });
@@ -83,7 +83,7 @@ describe("Merapi Plugin: Express", () => {
             post(req, res) { res.send(); }
         });
 
-        container.initialize();
+        yield container.initialize();
         let app = yield container.resolve("app");
         expect(app).to.exist;
         chai.request(app).get("/get").end((e, r) => { expect(r.status).to.equal(200); });
@@ -116,7 +116,7 @@ describe("Merapi Plugin: Express", () => {
             get(req, res) { res.send(); }
         });
 
-        container.initialize();
+        yield container.initialize();
         let app = yield container.resolve("app");
         expect(app).to.exist;
         chai.request(app).get("/").end((e, r) => { expect(r.status).to.equal(200); });
@@ -146,7 +146,7 @@ describe("Merapi Plugin: Express", () => {
             }
         });
 
-        container.start();
+        yield container.start();
         let app = yield container.resolve("app");
         expect(app).to.exist;
         done;

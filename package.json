@@ -1,10 +1,11 @@
 {
     "name": "merapi-plugin-express",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "description": "Merapi Plugin for Express App",
     "main": "index.js",
     "scripts": {
-        "test": "istanbul cover -x '**/*_test.js' node_modules/mocha/bin/_mocha '!(node_modules)/**/*_test.js' -- -R spec --recursive"
+        "test": "./node_modules/.bin/mocha",
+        "cover": "./node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -R spec"
     },
     "repository": {
         "type": "git",
@@ -18,9 +19,9 @@
     "license": "ISC",
     "homepage": "https://github.com/kata-ai/merapi-plugin-express",
     "dependencies": {
-        "@yesboss/merapi": "^0.9.7",
         "body-parser": "^1.15.2",
         "express": "^4.14.0",
+        "merapi": "^0.17.1",
         "type-check": "^0.3.2"
     },
     "devDependencies": {

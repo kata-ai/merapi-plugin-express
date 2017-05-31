@@ -1,7 +1,7 @@
 "use strict";
 
-const { async, Component } = require("@yesboss/merapi");
-const merapi = require("@yesboss/merapi");
+const { async, Component } = require("merapi");
+const merapi = require("merapi");
 const getfn = require("../lib/getfn");
 const { expect } = require("chai");
 
