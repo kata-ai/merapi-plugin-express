@@ -23,6 +23,7 @@ module.exports = function (merapi) {
 
                 let port = cfg.port || 8080;
                 let host = cfg.host || "localhost";
+                let mergeParams = cfg.mergeParams || false;
                 let middleware = cfg.middleware || [];
                 let routes = cfg.routes || {};
 
@@ -30,7 +31,7 @@ module.exports = function (merapi) {
                     app.use(yield getFn(middleware[i]));
                 }
 
-                app.use(yield router(injector, routes));
+                app.use(yield router(injector, routes, mergeParams));
 
                 app.start = function () {
                     app.listen(port, host);
