@@ -17,21 +17,23 @@ module.exports = function (merapi) {
 
                 let getFn = getfn(injector);
 
-                app.use(bodyParser.json());
                 opt.config = opt.config || "app";
                 let cfg = config.default(opt.config, {});
 
                 let port = cfg.port || 8080;
                 let host = cfg.host || "localhost";
-                let mergeParams = cfg.mergeParams || false;
+                let routerOptions = cfg.routerOptions || {};
+                let bodyParserOptions = cfg.bodyParserOptions || {};
                 let middleware = cfg.middleware || [];
                 let routes = cfg.routes || {};
+
+                app.use(bodyParser.json(bodyParserOptions));
 
                 for (let i = 0; i < middleware.length; i++) {
                     app.use(yield getFn(middleware[i]));
                 }
 
-                app.use(yield router(injector, routes, mergeParams));
+                app.use(yield router(injector, routes, routerOptions));
 
                 app.start = function () {
                     app.listen(port, host);
