@@ -28,6 +28,7 @@ module.exports = function (merapi) {
                 let routes = cfg.routes || {};
 
                 app.use(bodyParser.json(bodyParserOptions));
+                app.use(bodyParser.urlencoded({ extended: true }));
 
                 for (let i = 0; i < middleware.length; i++) {
                     app.use(yield getFn(middleware[i]));
