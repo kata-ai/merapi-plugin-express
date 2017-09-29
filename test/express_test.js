@@ -151,4 +151,141 @@ describe("Merapi Plugin: Express", () => {
         expect(app).to.exist;
         done;
     }));
+
+    it("should get resolved with route array in middleware", async(function* (done) {
+        let routes = [
+            "com.access",
+            { "GET /get": "com.get" }
+        ];
+
+        let container = merapi({
+            basepath: __dirname,
+            config: {
+                name: "test",
+                version: "1.0.0",
+                components: { "app": { type: "express" } },
+                main: "com",
+                app: { routes, "middleware": ["routes", "com.response"] }
+            }
+        });
+
+        container.registerPlugin("express", require("../index.js")(container));
+        container.register("com", class Com extends Component {
+            constructor() { super(); }
+            start() { }
+            get(req, res, next) { next() }
+            access(req, res, next) {
+                let token = req.query.token;
+                if (token == "access") next();
+                else res.status(401).end("Unauthorized");
+            }
+            response(req, res) { res.send(); }
+        });
+
+        yield container.start();
+        let app = yield container.resolve("app");
+        expect(app).to.exist;
+
+        chai.request(app).get("/get").end((e, r) => { expect(r.status).to.equal(401); });
+        chai.request(app).get("/get").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
+        done;
+    }));
+
+    it("should get resolved with route string in middleware", async(function* (done) {
+        let routes = "com.get";
+
+        let container = merapi({
+            basepath: __dirname,
+            config: {
+                name: "test",
+                version: "1.0.0",
+                components: { "app": { type: "express" } },
+                main: "com",
+                app: { routes, "middleware": ["com.access", "routes", "com.response"] }
+            }
+        });
+
+        container.registerPlugin("express", require("../index.js")(container));
+        container.register("com", class Com extends Component {
+            constructor() { super(); }
+            start() { }
+            get(req, res, next) { next() }
+            access(req, res, next) {
+                let token = req.query.token;
+                if (token == "access") next();
+                else res.status(401).end("Unauthorized");
+            }
+            response(req, res) { res.send(); }
+        });
+
+        yield container.start();
+        let app = yield container.resolve("app");
+        expect(app).to.exist;
+
+        chai.request(app).get("/").end((e, r) => { expect(r.status).to.equal(401); });
+        chai.request(app).get("/").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
+        done;
+    }));
+
+    it("should get resolved with route object in middleware", async(function* (done) {
+        let routes = {
+            "GET /get": "com.get",
+            "GET /get-second": {
+                "/": "com.get"
+            },
+            "GET": "com.get",
+            "POST": {
+                "/": "com.post"
+            },
+            "/what": "com.get",
+            "/get-third": {
+                "GET": "com.get"
+            }
+        };
+
+        let container = merapi({
+            basepath: __dirname,
+            config: {
+                name: "test",
+                version: "1.0.0",
+                components: { "app": { type: "express" } },
+                main: "com",
+                app: { routes, "middleware": ["com.access", "routes", "com.response"] }
+            }
+        });
+
+        container.registerPlugin("express", require("../index.js")(container));
+        container.register("com", class Com extends Component {
+            constructor() { super(); }
+            start() { }
+            get(req, res, next) { next() }
+            what(req, res, next) { next() }
+            post(req, res, next) { next() }
+            access(req, res, next) {
+                let token = req.query.token;
+                if (token == "access") next();
+                else res.status(401).end("Unauthorized");
+            }
+            response(req, res) { res.send(); }
+        });
+
+        yield container.start();
+        let app = yield container.resolve("app");
+        expect(app).to.exist;
+
+        chai.request(app).get("/get").end((e, r) => { expect(r.status).to.equal(401); });
+        chai.request(app).get("/get-second").end((e, r) => { expect(r.status).to.equal(401); });
+        chai.request(app).get("/").end((e, r) => { expect(r.status).to.equal(401); });
+        chai.request(app).post("/").end((e, r) => { expect(r.status).to.equal(401); });
+        chai.request(app).get("/what").end((e, r) => { expect(r.status).to.equal(401); });
+        chai.request(app).get("/get-third").end((e, r) => { expect(r.status).to.equal(401); });
+
+        chai.request(app).get("/get").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
+        chai.request(app).get("/get-second").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
+        chai.request(app).get("/").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
+        chai.request(app).post("/").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
+        chai.request(app).get("/what").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
+        chai.request(app).get("/get-third").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
+        done;
+    }));
 });

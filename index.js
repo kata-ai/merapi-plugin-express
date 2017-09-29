@@ -30,11 +30,18 @@ module.exports = function (merapi) {
                 app.use(bodyParser.json(bodyParserOptions));
                 app.use(bodyParser.urlencoded({ extended: true }));
 
+                let isRoutesInMiddleware = true;
+                
                 for (let i = 0; i < middleware.length; i++) {
-                    app.use(yield getFn(middleware[i]));
+                    if (middleware[i] === 'routes') {
+                        app.use(yield router(injector, routes, routerOptions));
+                        isRoutesInMiddleware = !isRoutesInMiddleware;
+                    } else {
+                        app.use(yield getFn(middleware[i]));
+                    }
                 }
 
-                app.use(yield router(injector, routes, routerOptions));
+                if (!isRoutesInMiddleware) app.use(yield router(injector, routes, routerOptions));
 
                 app.start = function () {
                     app.listen(port, host);
