@@ -30,7 +30,7 @@ module.exports = function (merapi) {
                 app.use(bodyParser.json(bodyParserOptions));
                 app.use(bodyParser.urlencoded({ extended: true }));
 
-                let isRoutesInMiddleware = true;
+                let isRoutesInMiddleware = false;
                 
                 for (let i = 0; i < middleware.length; i++) {
                     if (middleware[i] === 'routes') {
