@@ -1,4 +1,6 @@
-# Merapi
+# Merapi Plugin: Express
+
+## Introduction
 Express plugin for Merapi
 
 ## Installation
