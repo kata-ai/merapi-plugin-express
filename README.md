@@ -1,4 +1,6 @@
-# Merapi
+# Merapi Plugin: Express
+
+## Introduction
 Express plugin for Merapi
 
 ## Installation
@@ -14,7 +16,7 @@ Copyright (c) 2015-2017 Kata.ai. All rights reserved.
 - Ahmad Rizqi Meydiarso (rizqme) - Initial Author
 - Roni Kurniawan
 - Ikmal Syifai (ikmals)
-- Prakash Divvy (prakashdivyy)
+- Prakash Divy (prakashdivyy)
 - Husnul Anwari (husnulhamidiah)
 
 ## License
