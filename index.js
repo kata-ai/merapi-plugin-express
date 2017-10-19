@@ -22,7 +22,7 @@ module.exports = function (merapi) {
 
                 let port = cfg.port || 8080;
                 let host = cfg.host || "localhost";
-                let routerOptions = cfg.router || {};
+                let routerOptions = Object.assign({}, { mergeParams: true }, cfg.router);
                 let bodyParserOptions = cfg.bodyParser || {};
                 let middleware = cfg.middleware || [];
                 let routes = cfg.routes || {};
