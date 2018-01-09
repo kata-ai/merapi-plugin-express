@@ -1,5 +1,7 @@
 # Merapi Plugin: Express
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9fd74407da654907994f23ff60458858)](https://www.codacy.com/app/kata-ai/merapi-plugin-express?utm_source=github.com&utm_medium=referral&utm_content=kata-ai/merapi-plugin-express&utm_campaign=badger)
+
 ## Introduction
 Express plugin for Merapi
 
