@@ -16,6 +16,12 @@
         "merapi"
     ],
     "author": "Ahmad Rizqi Meydiarso",
+    "contributors": [
+        "Roni Kurniawan",
+        "Ikmal Syifai",
+        "Prakash Divy",
+        "Husnul Anwari"
+    ],
     "license": "ISC",
     "homepage": "https://github.com/kata-ai/merapi-plugin-express",
     "dependencies": {
