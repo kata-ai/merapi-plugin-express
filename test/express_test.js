@@ -12,7 +12,7 @@ describe("Merapi Plugin: Express", () => {
         port++;
     });
 
-    it("should get route array resolved", async(function* (done) {
+    it("should get route array resolved", async(function* () {
         let routes = [
             "com.access",
             { "GET /get": "com.get" }
@@ -48,7 +48,7 @@ describe("Merapi Plugin: Express", () => {
         yield request(app).get("/get").query({ token: "access" }).expect(200);
     }));
 
-    it("should get route object resolved", async(function* (done) {
+    it("should get route object resolved", async(function* () {
         let routes = {
             "GET /get": "com.get",
             "GET /get-second": {
@@ -95,7 +95,7 @@ describe("Merapi Plugin: Express", () => {
         yield request(app).get("/get-third").expect(200);
     }));
 
-    it("should get route string resolved", async(function* (done) {
+    it("should get route string resolved", async(function* () {
         let routes = "com.get";
 
         let container = merapi({
@@ -122,7 +122,7 @@ describe("Merapi Plugin: Express", () => {
         yield request(app).get("/get").expect(200);
     }));
 
-    it("should get resolved without routes", async(function* (done) {
+    it("should get resolved without routes", async(function* () {
         let container = merapi({
             basepath: __dirname,
             config: {
@@ -151,7 +151,7 @@ describe("Merapi Plugin: Express", () => {
         yield request(app).get("/").expect(401);
     }));
 
-    it("should get resolved with route array in middleware", async(function* (done) {
+    it("should get resolved with route array in middleware", async(function* () {
         let routes = [
             "com.access",
             { "GET /get": "com.get" }
@@ -188,7 +188,7 @@ describe("Merapi Plugin: Express", () => {
         yield request(app).get("/get").query({ token: "access" }).expect(200);
     }));
 
-    it("should get resolved with route string in middleware", async(function* (done) {
+    it("should get resolved with route string in middleware", async(function* () {
         let routes = "com.get";
 
         let container = merapi({
@@ -222,7 +222,7 @@ describe("Merapi Plugin: Express", () => {
         yield request(app).get("/").query({ token: "access" }).expect(200);
     }));
 
-    it("should get resolved with route object in middleware", async(function* (done) {
+    it("should get resolved with route object in middleware", async(function* () {
         let routes = {
             "GET /get": "com.get",
             "GET /get-second": {
@@ -280,5 +280,52 @@ describe("Merapi Plugin: Express", () => {
         yield request(app).post("/").query({ token: "access" }).expect(200);
         yield request(app).get("/what").query({ token: "access" }).expect(200);
         yield request(app).get("/get-third").query({ token: "access" }).expect(200);
+    }));
+
+    it("should resolve methods in bodyParserOptions.verify ", async(function* () {
+        let routes = {
+            "POST": {
+                "/": "com.post"
+            }
+        };
+
+        let container = merapi({
+            basepath: __dirname,
+            config: {
+                name: "test",
+                version: "1.0.0",
+                components: { "app": { type: "express" } },
+                main: "com",
+                app: {
+                    routes,
+                    bodyParser: {
+                        verify: "com.verify"
+                    },
+                    port
+                }
+            }
+        });
+
+        container.registerPlugin("express", require("../index.js")(container));
+        container.register("com", class Com extends Component {
+            constructor() { super(); }
+            start() { }
+            post(req, res) {
+                let data = JSON.parse(req.rawBody.toString());
+                res.json(data);
+            }
+            verify(req, res, buf) {
+                req.rawBody = buf;
+            }
+        });
+
+        yield container.initialize();
+        let app = yield container.resolve("app");
+
+        let bodyTest = {
+            a: 123,
+            b: "abc"
+        };
+        yield request(app).post("/").send(bodyTest).expect(bodyTest);
     }));
 });
