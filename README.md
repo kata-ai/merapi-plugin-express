@@ -7,6 +7,9 @@
 ## Introduction
 Express plugin for Merapi
 
+## Links
+- [Changelog](CHANGELOG.md)
+
 ## Installation
 Install using npm:
 ```
@@ -14,7 +17,7 @@ npm install merapi-plugin-express --save
 ```
 
 ## Copyright
-Copyright (c) 2015-2017 Kata.ai. All rights reserved.
+Copyright (c) 2015-2018 Kata.ai. All rights reserved.
 
 ## Contributors
 - Ahmad Rizqi Meydiarso (rizqme) - Initial Author
