@@ -2,13 +2,15 @@
 
 const merapi = require("merapi");
 const { async, Component } = require("merapi");
-const chai = require("chai");
-const { expect } = require("chai");
-const chaiHttp = require("chai-http");
+const request = require("supertest");
 
-chai.use(chaiHttp);
-
+/* eslint-env node, mocha */
 describe("Merapi Plugin: Express", () => {
+    let port = 10000;
+
+    afterEach(function () {
+        port++;
+    });
 
     it("should get route array resolved", async(function* (done) {
         let routes = [
@@ -23,7 +25,7 @@ describe("Merapi Plugin: Express", () => {
                 version: "1.0.0",
                 components: { "app": { type: "express" } },
                 main: "com",
-                app: { routes }
+                app: { routes, port }
             }
         });
 
@@ -41,10 +43,9 @@ describe("Merapi Plugin: Express", () => {
 
         yield container.initialize();
         let app = yield container.resolve("app");
-        expect(app).to.exist;
-        chai.request(app).get("/get").end((e, r) => { expect(r.status).to.equal(401); });
-        chai.request(app).get("/get").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
-        done;
+
+        yield request(app).get("/get").expect(401);
+        yield request(app).get("/get").query({ token: "access" }).expect(200);
     }));
 
     it("should get route object resolved", async(function* (done) {
@@ -70,7 +71,7 @@ describe("Merapi Plugin: Express", () => {
                 version: "1.0.0",
                 components: { "app": { type: "express" } },
                 main: "com",
-                app: { routes }
+                app: { routes, port }
             }
         });
 
@@ -85,14 +86,13 @@ describe("Merapi Plugin: Express", () => {
 
         yield container.initialize();
         let app = yield container.resolve("app");
-        expect(app).to.exist;
-        chai.request(app).get("/get").end((e, r) => { expect(r.status).to.equal(200); });
-        chai.request(app).get("/get-second").end((e, r) => { expect(r.status).to.equal(200); });
-        chai.request(app).get("/").end((e, r) => { expect(r.status).to.equal(200); });
-        chai.request(app).post("/").end((e, r) => { expect(r.status).to.equal(200); });
-        chai.request(app).get("/what").end((e, r) => { expect(r.status).to.equal(200); });
-        chai.request(app).get("/get-third").end((e, r) => { expect(r.status).to.equal(200); });
-        done;
+
+        yield request(app).get("/get").expect(200);
+        yield request(app).get("/get-second").expect(200);
+        yield request(app).get("/").expect(200);
+        yield request(app).post("/").expect(200);
+        yield request(app).get("/what").expect(200);
+        yield request(app).get("/get-third").expect(200);
     }));
 
     it("should get route string resolved", async(function* (done) {
@@ -105,7 +105,7 @@ describe("Merapi Plugin: Express", () => {
                 version: "1.0.0",
                 components: { "app": { type: "express" } },
                 main: "com",
-                app: { routes }
+                app: { routes, port }
             }
         });
 
@@ -118,9 +118,8 @@ describe("Merapi Plugin: Express", () => {
 
         yield container.initialize();
         let app = yield container.resolve("app");
-        expect(app).to.exist;
-        chai.request(app).get("/").end((e, r) => { expect(r.status).to.equal(200); });
-        done;
+
+        yield request(app).get("/get").expect(200);
     }));
 
     it("should get resolved without routes", async(function* (done) {
@@ -148,8 +147,8 @@ describe("Merapi Plugin: Express", () => {
 
         yield container.start();
         let app = yield container.resolve("app");
-        expect(app).to.exist;
-        done;
+
+        yield request(app).get("/").expect(401);
     }));
 
     it("should get resolved with route array in middleware", async(function* (done) {
@@ -165,7 +164,7 @@ describe("Merapi Plugin: Express", () => {
                 version: "1.0.0",
                 components: { "app": { type: "express" } },
                 main: "com",
-                app: { routes, "middleware": ["routes", "com.response"] }
+                app: { routes, port, "middleware": ["routes", "com.response"] }
             }
         });
 
@@ -173,7 +172,7 @@ describe("Merapi Plugin: Express", () => {
         container.register("com", class Com extends Component {
             constructor() { super(); }
             start() { }
-            get(req, res, next) { next() }
+            get(req, res, next) { next(); }
             access(req, res, next) {
                 let token = req.query.token;
                 if (token == "access") next();
@@ -184,11 +183,9 @@ describe("Merapi Plugin: Express", () => {
 
         yield container.start();
         let app = yield container.resolve("app");
-        expect(app).to.exist;
 
-        chai.request(app).get("/get").end((e, r) => { expect(r.status).to.equal(401); });
-        chai.request(app).get("/get").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
-        done;
+        yield request(app).get("/get").expect(401);
+        yield request(app).get("/get").query({ token: "access" }).expect(200);
     }));
 
     it("should get resolved with route string in middleware", async(function* (done) {
@@ -201,7 +198,7 @@ describe("Merapi Plugin: Express", () => {
                 version: "1.0.0",
                 components: { "app": { type: "express" } },
                 main: "com",
-                app: { routes, "middleware": ["com.access", "routes", "com.response"] }
+                app: { routes, port, "middleware": ["com.access", "routes", "com.response"] }
             }
         });
 
@@ -209,7 +206,7 @@ describe("Merapi Plugin: Express", () => {
         container.register("com", class Com extends Component {
             constructor() { super(); }
             start() { }
-            get(req, res, next) { next() }
+            get(req, res, next) { next(); }
             access(req, res, next) {
                 let token = req.query.token;
                 if (token == "access") next();
@@ -220,11 +217,9 @@ describe("Merapi Plugin: Express", () => {
 
         yield container.start();
         let app = yield container.resolve("app");
-        expect(app).to.exist;
 
-        chai.request(app).get("/").end((e, r) => { expect(r.status).to.equal(401); });
-        chai.request(app).get("/").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
-        done;
+        yield request(app).get("/").expect(401);
+        yield request(app).get("/").query({ token: "access" }).expect(200);
     }));
 
     it("should get resolved with route object in middleware", async(function* (done) {
@@ -250,7 +245,7 @@ describe("Merapi Plugin: Express", () => {
                 version: "1.0.0",
                 components: { "app": { type: "express" } },
                 main: "com",
-                app: { routes, "middleware": ["com.access", "routes", "com.response"] }
+                app: { routes, port, "middleware": ["com.access", "routes", "com.response"] }
             }
         });
 
@@ -258,9 +253,9 @@ describe("Merapi Plugin: Express", () => {
         container.register("com", class Com extends Component {
             constructor() { super(); }
             start() { }
-            get(req, res, next) { next() }
-            what(req, res, next) { next() }
-            post(req, res, next) { next() }
+            get(req, res, next) { next(); }
+            what(req, res, next) { next(); }
+            post(req, res, next) { next(); }
             access(req, res, next) {
                 let token = req.query.token;
                 if (token == "access") next();
@@ -271,21 +266,19 @@ describe("Merapi Plugin: Express", () => {
 
         yield container.start();
         let app = yield container.resolve("app");
-        expect(app).to.exist;
 
-        chai.request(app).get("/get").end((e, r) => { expect(r.status).to.equal(401); });
-        chai.request(app).get("/get-second").end((e, r) => { expect(r.status).to.equal(401); });
-        chai.request(app).get("/").end((e, r) => { expect(r.status).to.equal(401); });
-        chai.request(app).post("/").end((e, r) => { expect(r.status).to.equal(401); });
-        chai.request(app).get("/what").end((e, r) => { expect(r.status).to.equal(401); });
-        chai.request(app).get("/get-third").end((e, r) => { expect(r.status).to.equal(401); });
+        yield request(app).get("/get").expect(401);
+        yield request(app).get("/get-second").expect(401);
+        yield request(app).get("/").expect(401);
+        yield request(app).post("/").expect(401);
+        yield request(app).get("/what").expect(401);
+        yield request(app).get("/get-third").expect(401);
 
-        chai.request(app).get("/get").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
-        chai.request(app).get("/get-second").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
-        chai.request(app).get("/").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
-        chai.request(app).post("/").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
-        chai.request(app).get("/what").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
-        chai.request(app).get("/get-third").query({ token: "access" }).end((e, r) => { expect(r.status).to.equal(200); });
-        done;
+        yield request(app).get("/get").query({ token: "access" }).expect(200);
+        yield request(app).get("/get-second").query({ token: "access" }).expect(200);
+        yield request(app).get("/").query({ token: "access" }).expect(200);
+        yield request(app).post("/").query({ token: "access" }).expect(200);
+        yield request(app).get("/what").query({ token: "access" }).expect(200);
+        yield request(app).get("/get-third").query({ token: "access" }).expect(200);
     }));
 });
