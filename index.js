@@ -27,11 +27,15 @@ module.exports = function (merapi) {
                 let middleware = cfg.middleware || [];
                 let routes = cfg.routes || {};
 
+                if (bodyParserOptions.verify) {
+                    bodyParserOptions.verify = yield getFn(bodyParserOptions.verify);
+                }
+
                 app.use(bodyParser.json(bodyParserOptions));
                 app.use(bodyParser.urlencoded({ extended: true }));
 
                 let isRoutesInMiddleware = false;
-                
+
                 for (let i = 0; i < middleware.length; i++) {
                     if (middleware[i] === 'routes') {
                         app.use(yield router(injector, routes, routerOptions));

@@ -281,4 +281,51 @@ describe("Merapi Plugin: Express", () => {
         yield request(app).get("/what").query({ token: "access" }).expect(200);
         yield request(app).get("/get-third").query({ token: "access" }).expect(200);
     }));
+
+    it("should resolve methods in bodyParserOptions.verify ", async(function* (done) {
+        let routes = {
+            "POST": {
+                "/": "com.post"
+            }
+        };
+
+        let container = merapi({
+            basepath: __dirname,
+            config: {
+                name: "test",
+                version: "1.0.0",
+                components: { "app": { type: "express" } },
+                main: "com",
+                app: {
+                    routes,
+                    bodyParser: {
+                        verify: "com.verify"
+                    },
+                    port
+                }
+            }
+        });
+
+        container.registerPlugin("express", require("../index.js")(container));
+        container.register("com", class Com extends Component {
+            constructor() { super(); }
+            start() { }
+            post(req, res) {
+                let data = JSON.parse(req.rawBody.toString());
+                res.json(data);
+            }
+            verify(req, res, buf) {
+                req.rawBody = buf;
+            }
+        });
+
+        yield container.initialize();
+        let app = yield container.resolve("app");
+
+        let bodyTest = {
+            a: 123,
+            b: "abc"
+        };
+        yield request(app).post("/").send(bodyTest).expect(bodyTest);
+    }));
 });
