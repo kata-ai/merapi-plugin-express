@@ -4,6 +4,7 @@ const merapi = require("merapi");
 const { async, Component } = require("merapi");
 const request = require("supertest");
 
+/* eslint-env node, mocha */
 describe("Merapi Plugin: Express", () => {
     let port = 10000;
 
