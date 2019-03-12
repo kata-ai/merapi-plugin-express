@@ -1,6 +1,6 @@
 {
   "name": "merapi-plugin-express",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Merapi Plugin for Express App",
   "main": "index.js",
   "scripts": {
