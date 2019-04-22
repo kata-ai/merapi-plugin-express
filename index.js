@@ -32,8 +32,8 @@ module.exports = function (merapi) {
                 }
 
                 app.use(bodyParser.json(bodyParserOptions));
-                app.use(bodyParser.urlencoded({ extended: true }));
-                app.use(bodyParser.raw({ type: "*/*" }));
+                app.use(bodyParser.urlencoded(Object.assign({ extended: true }, bodyParserOptions)));
+                app.use(bodyParser.raw(Object.assign({ type: "*/*" }, bodyParserOptions)));
 
                 let isRoutesInMiddleware = false;
 
