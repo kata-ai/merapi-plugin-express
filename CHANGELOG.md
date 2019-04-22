@@ -1,4 +1,10 @@
 # CHANGELOG
+## [0.6.1] - 2019-04-22
+### Added
+- Merge bodyParser options
+
+[0.6.1]: https://github.com/kata-ai/merapi-plugin-express/compare/v0.6.0...v0.6.1
+
 ## [0.6.0] - 2019-03-12
 ### Added
 - Add bodyParser.raw()
