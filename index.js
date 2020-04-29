@@ -49,7 +49,8 @@ module.exports = function (merapi) {
                 if (!isRoutesInMiddleware) app.use(yield router(injector, routes, routerOptions));
 
                 app.start = function () {
-                    app.listen(port, host);
+                    app.__listen = app.listen(port, host);
+                    app.__logger = logger;
                     logger.info(`Starting express on ${host}:${port}`);
                 };
                 return app;
@@ -60,6 +61,17 @@ module.exports = function (merapi) {
             for (let i = 0; i < this.apps.length; i++) {
                 let app = yield merapi.resolve(this.apps[i]);
                 app.start();
+            }
+        },
+
+        *onStop() {
+            for (let i = 0; i < this.apps.length; i++) {
+                let app = yield merapi.resolve(this.apps[i]);
+                if (app.__listen) {
+                    app.__listen.close(() => {
+                        app.__logger.info("Shutting down express plugin...");
+                    })
+                }
             }
         }
     };
