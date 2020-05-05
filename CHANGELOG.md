@@ -1,4 +1,8 @@
 # CHANGELOG
+## [0.7.1] - 2020-05-05
+### Fixed
+-  Fix basicController.crud router
+
 ## [0.6.1] - 2019-04-22
 ### Added
 - Merge bodyParser options
