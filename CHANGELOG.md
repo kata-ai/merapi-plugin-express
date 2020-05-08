@@ -1,4 +1,8 @@
 # CHANGELOG
+## [0.7.2] - 2020-05-08
+### Fixed
+-  Fix bodyParser.raw cannot read file contents
+
 ## [0.7.1] - 2020-05-05
 ### Fixed
 -  Fix basicController.crud router
