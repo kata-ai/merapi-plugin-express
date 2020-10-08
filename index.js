@@ -1,9 +1,11 @@
 "use strict";
 
 const express = require("express");
+const helmet = require("helmet");
 const bodyParser = require("body-parser");
 const router = require("./lib/router");
 const getfn = require("./lib/getfn");
+const xssDetection = require("./lib/xss");
 
 module.exports = function (merapi) {
 
@@ -14,6 +16,7 @@ module.exports = function (merapi) {
             this.apps.push(name);
             return function* (config, injector, logger) {
                 let app = express();
+                app.use(helmet());
 
                 let getFn = getfn(injector);
 
@@ -34,6 +37,8 @@ module.exports = function (merapi) {
                 app.use(bodyParser.json(bodyParserOptions));
                 app.use(bodyParser.urlencoded(Object.assign({ extended: true }, bodyParserOptions)));
                 // app.use(bodyParser.raw(Object.assign({ type: "*/*" }, bodyParserOptions)));
+
+                app.use(xssDetection)
 
                 let isRoutesInMiddleware = false;
 
