@@ -4,6 +4,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const router = require("./lib/router");
 const getfn = require("./lib/getfn");
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 module.exports = function (merapi) {
 
@@ -26,6 +28,16 @@ module.exports = function (merapi) {
                 let bodyParserOptions = cfg.bodyParser || {};
                 let middleware = cfg.middleware || [];
                 let routes = cfg.routes || {};
+                let swaggerSpec = swaggerJsdoc({
+                    definition: {
+                      openapi: '3.0.0',
+                      info: {
+                        title: 'API Docs',
+                        version: '1.0.0',
+                      },
+                    },
+                    apis: ['./components/controllers/*_controller.ts', './components/managers/*_manager.ts', './components/swagger/*.yaml'],
+                });
 
                 if (bodyParserOptions.verify) {
                     bodyParserOptions.verify = yield getFn(bodyParserOptions.verify);
@@ -33,6 +45,7 @@ module.exports = function (merapi) {
 
                 app.use(bodyParser.json(bodyParserOptions));
                 app.use(bodyParser.urlencoded(Object.assign({ extended: true }, bodyParserOptions)));
+                app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
                 // app.use(bodyParser.raw(Object.assign({ type: "*/*" }, bodyParserOptions)));
 
                 let isRoutesInMiddleware = false;
