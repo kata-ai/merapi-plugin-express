@@ -32,7 +32,7 @@ module.exports = function (merapi) {
                     definition: {
                       openapi: '3.0.0',
                       info: {
-                        title: 'API Docs',
+                        title: 'API Documentation',
                         version: '1.0.0',
                       },
                     },
