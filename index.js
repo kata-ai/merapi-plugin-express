@@ -28,16 +28,21 @@ module.exports = function (merapi) {
                 let bodyParserOptions = cfg.bodyParser || {};
                 let middleware = cfg.middleware || [];
                 let routes = cfg.routes || {};
-                let swaggerSpec = swaggerJsdoc({
-                    definition: {
-                      openapi: '3.0.0',
-                      info: {
+                let swaggerEnable = (cfg.swagger && cfg.swagger.enable) ? cfg.swagger.enable : false
+                if (swaggerEnable) {
+                    let swaggerInfo = cfg.swagger.info || {
                         title: 'API Documentation',
                         version: '1.0.0',
-                      },
-                    },
-                    apis: ['./components/controllers/*_controller.ts', './components/managers/*_manager.ts', './components/swagger/*.yaml'],
-                });
+                    };
+                    let swaggerSpec = swaggerJsdoc({
+                        definition: {
+                          openapi: '3.0.0',
+                          info: swaggerInfo,
+                        },
+                        apis: ['./components/controllers/*_controller.ts', './components/managers/*_manager.ts', './components/swagger/*.yaml'],
+                    });
+                    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));    
+                }
 
                 if (bodyParserOptions.verify) {
                     bodyParserOptions.verify = yield getFn(bodyParserOptions.verify);
@@ -45,7 +50,6 @@ module.exports = function (merapi) {
 
                 app.use(bodyParser.json(bodyParserOptions));
                 app.use(bodyParser.urlencoded(Object.assign({ extended: true }, bodyParserOptions)));
-                app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
                 // app.use(bodyParser.raw(Object.assign({ type: "*/*" }, bodyParserOptions)));
 
                 let isRoutesInMiddleware = false;
