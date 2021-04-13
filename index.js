@@ -30,6 +30,7 @@ module.exports = function (merapi) {
                 let routes = cfg.routes || {};
                 let swaggerEnable = (cfg.swagger && cfg.swagger.enable) ? cfg.swagger.enable : false
                 if (swaggerEnable) {
+                    let swaggerPath = cfg.swagger.path || '/api-docs';
                     let swaggerInfo = cfg.swagger.info || {
                         title: 'API Documentation',
                         version: '1.0.0',
@@ -41,7 +42,7 @@ module.exports = function (merapi) {
                         },
                         apis: ['./components/controllers/*_controller.ts', './components/managers/*_manager.ts', './components/swagger/*.yaml'],
                     });
-                    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));    
+                    app.use(swaggerPath, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
                 }
 
                 if (bodyParserOptions.verify) {
