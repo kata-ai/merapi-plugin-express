@@ -40,7 +40,11 @@ module.exports = function (merapi) {
                           openapi: '3.0.0',
                           info: swaggerInfo,
                         },
-                        apis: ['./components/controllers/*_controller.ts', './components/managers/*_manager.ts', './components/swagger/*.yaml'],
+                        apis: [
+                            './lib/components/controllers/*_controller.js',
+                            './lib/components/managers/*_manager.js',
+                            './lib/components/swagger/*.yaml'
+                        ],
                     });
                     app.use(swaggerPath, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
                 }
