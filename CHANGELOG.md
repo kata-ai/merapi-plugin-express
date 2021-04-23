@@ -1,4 +1,10 @@
 # CHANGELOG
+## [0.7.4] - 2021-04-23
+### Fixed
+-  Swagger APIs Path
+## [0.7.3] - 2021-04-19
+### Add
+-  Add Swagger UI
 ## [0.7.2] - 2020-05-08
 ### Fixed
 -  Fix bodyParser.raw cannot read file contents
