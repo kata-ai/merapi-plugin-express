@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [0.7.5] - 2021-05-03
+### Fixed
+-  Swagger APIs Path Null Condition
+
 ## [0.7.4] - 2021-04-23
 ### Fixed
 -  Swagger APIs Path
