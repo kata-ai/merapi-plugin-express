@@ -31,7 +31,6 @@ module.exports = function (merapi) {
                 let swaggerEnable = (cfg.swagger && cfg.swagger.enable) ? cfg.swagger.enable : false
                 if (swaggerEnable) {
                     let swaggerPath = (cfg.swagger.path != '' && cfg.swagger.path != '/') ? cfg.swagger.path : '/api-docs';
-                    console.dir(`swaggerPath ${swaggerPath}`)
                     let swaggerInfo = cfg.swagger.info || {
                         title: 'API Documentation',
                         version: '1.0.0',
